@@ -37,18 +37,15 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity implements BeaconConsumer {
     protected static final String TAG = "MonitoringActivity";
     private BeaconManager beaconManager;
-    private EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        editText = (EditText)findViewById(R.id.editText);
         RadioButton customerRadio = (RadioButton)findViewById(R.id.radioButton);
         customerRadio.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
-                // here i call new screen;
                 Intent i = new Intent(MainActivity.this, WelcomeActivity.class);
                 startActivity(i);
             }
@@ -84,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        editText.setText("Inside Destory... ");
         beaconManager.unbind(this);
 
     }
@@ -93,13 +89,11 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer {
         beaconManager.setMonitorNotifier(new MonitorNotifier() {
             @Override
             public void didEnterRegion(Region region) {
-                editText.setText("I just saw an beacon for the first time!");
                 Log.i(TAG, "I just saw an beacon for the first time!");
             }
 
             @Override
             public void didExitRegion(Region region) {
-                editText.setText("I no longer see an beacon");
                 Log.i(TAG, "I no longer see an beacon");
 
             }
