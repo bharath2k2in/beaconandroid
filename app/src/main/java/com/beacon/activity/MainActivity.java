@@ -33,29 +33,46 @@ import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity implements BeaconConsumer {
+public class MainActivity extends AppCompatActivity{
     protected static final String TAG = "MonitoringActivity";
-    private BeaconManager beaconManager;
+    private com.estimote.sdk.BeaconManager beaconManager;
+    private com.estimote.sdk.Region region;
+    private ProgressDialog Dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        RadioButton customerRadio = (RadioButton)findViewById(R.id.radioButton);
+        /*RadioButton customerRadio = (RadioButton)findViewById(R.id.radioButton);
         customerRadio.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
                 Intent i = new Intent(MainActivity.this, WelcomeActivity.class);
                 startActivity(i);
             }
+        });*/
+        Dialog = new ProgressDialog(MainActivity.this);
+        Dialog.setMessage("Please wait..");
+        Dialog.show();
+
+        beaconManager = new com.estimote.sdk.BeaconManager(this);
+        beaconManager.setRangingListener(new com.estimote.sdk.BeaconManager.RangingListener() {
+            @Override
+            public void onBeaconsDiscovered(com.estimote.sdk.Region region, List<com.estimote.sdk.Beacon> list) {
+                if (!list.isEmpty()) {
+                    com.estimote.sdk.Beacon nearestBeacon = list.get(0);
+                    Log.d("Beacon", " Inside onBeaconsDiscovered.....  ");
+                    Dialog.dismiss();
+                    Intent i = new Intent(MainActivity.this, WelcomeActivity.class);
+                    startActivity(i);
+                }
+            }
         });
-        beaconManager = BeaconManager.getInstanceForApplication(this);
-        // To detect proprietary beacons, you must add a line like below corresponding to your beacon
-        // type.  Do a web search for "setBeaconLayout" to get the proper expression.
-        beaconManager.getBeaconParsers().add(new BeaconParser().
-                setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
-        beaconManager.bind(this);
+
+        region = new com.estimote.sdk.Region("ranged region", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), null, null);
 
     }
 
@@ -79,34 +96,28 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        beaconManager.unbind(this);
-
-    }
-    @Override
-    public void onBeaconServiceConnect() {
-        beaconManager.setMonitorNotifier(new MonitorNotifier() {
+    protected void onResume() {
+        super.onResume();
+        beaconManager.connect(new com.estimote.sdk.BeaconManager.ServiceReadyCallback() {
             @Override
-            public void didEnterRegion(Region region) {
-                Log.i(TAG, "I just saw an beacon for the first time!");
-            }
-
-            @Override
-            public void didExitRegion(Region region) {
-                Log.i(TAG, "I no longer see an beacon");
-
-            }
-
-            @Override
-            public void didDetermineStateForRegion(int state, Region region) {
-                Log.i(TAG, "I have just switched from seeing/not seeing beacons: "+state);
+            public void onServiceReady() {
+                beaconManager.startRanging(region);
             }
         });
-
-        try {
-            beaconManager.startMonitoringBeaconsInRegion(new Region("myMonitoringUniqueId", null, null, null));
-        } catch (RemoteException e) {    }
     }
+
+    @Override
+    protected void onPause() {
+        beaconManager.stopRanging(region);
+        super.onPause();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
 
 }
