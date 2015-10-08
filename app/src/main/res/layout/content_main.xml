@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Beacon Application"
+        android:text="RaboBank RoCE"
         android:id="@+id/textView"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
@@ -37,5 +37,14 @@
         android:layout_alignTop="@+id/radioButton"
         android:layout_alignEnd="@+id/textView"
         android:visibility="invisible" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Beaon Application Testing"
+        android:id="@+id/textView3"
+        android:layout_alignBottom="@+id/radioButton"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

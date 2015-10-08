@@ -3,6 +3,9 @@ package com.beacon.activity;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
@@ -22,6 +25,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+import com.beacon.app.NotifyService;
 import com.example.saravanan.beaconsample.R;
 
 import org.altbeacon.beacon.Beacon;
@@ -54,11 +58,13 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(i);
             }
         });*/
-        Dialog = new ProgressDialog(MainActivity.this);
-        Dialog.setMessage("Please wait..");
-        Dialog.show();
+      /* Dialog = new ProgressDialog(MainActivity.this);
+       Dialog.setMessage("Please wait..");
+       Dialog.show();
 
         beaconManager = new com.estimote.sdk.BeaconManager(this);
+
+       *//*
         beaconManager.setRangingListener(new com.estimote.sdk.BeaconManager.RangingListener() {
             @Override
             public void onBeaconsDiscovered(com.estimote.sdk.Region region, List<com.estimote.sdk.Beacon> list) {
@@ -70,46 +76,46 @@ public class MainActivity extends AppCompatActivity{
                     startActivity(i);
                 }
             }
+        });*//*
+
+        beaconManager.setRangingListener(new com.estimote.sdk.BeaconManager.RangingListener() {
+            @Override
+            public void onBeaconsDiscovered(com.estimote.sdk.Region region, List<com.estimote.sdk.Beacon> list) {
+                Intent intent = new Intent(MainActivity.this, NotifyService.class);
+                MainActivity.this.startService(intent);
+            }
         });
 
-        region = new com.estimote.sdk.Region("ranged region", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), null, null);
-
+        region = new com.estimote.sdk.Region("ranged region", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), null, null);*/
+        Intent intent = new Intent(MainActivity.this, NotifyService.class);
+        MainActivity.this.startService(intent);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        beaconManager.connect(new com.estimote.sdk.BeaconManager.ServiceReadyCallback() {
+        /*beaconManager.connect(new com.estimote.sdk.BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
                 beaconManager.startRanging(region);
             }
-        });
+        });*/
     }
 
     @Override
     protected void onPause() {
-        beaconManager.stopRanging(region);
-        super.onPause();
+       //beaconManager.stopRanging(region);
+       super.onPause();
     }
 
 

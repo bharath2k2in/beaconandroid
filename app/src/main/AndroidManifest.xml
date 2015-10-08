@@ -38,6 +38,7 @@
             android:label="@string/title_activity_customer_service"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <service android:name="com.beacon.app.NotifyService"/>
     </application>
 
 </manifest>
