@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -62,15 +63,16 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+        imageView = (ImageView) findViewById(R.id.imageView);
 
         /*imageView = (ImageView) findViewById(R.id.imageView);
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.my_photo);
         roundedImage = new RoundImage(bm);
         imageView.setImageDrawable(roundedImage);*/
 
-        imageView = (ImageView) findViewById(R.id.imageView);
+       /* imageView = (ImageView) findViewById(R.id.imageView);
         Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.my_photo);
-        imageView.setImageBitmap(icon);
+        imageView.setImageBitmap(icon);*/
 
         String []values = new String[0];
         listView = (ListView) findViewById(R.id.listView);
@@ -88,9 +90,6 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private class LongOperation  extends AsyncTask<String, Void, Void> {
-
-        private final HttpClient Client = new DefaultHttpClient();
-        private String Content;
         private String Error = null;
         private ProgressDialog Dialog = new ProgressDialog(WelcomeActivity.this);
         String result = "";
@@ -124,14 +123,18 @@ public class WelcomeActivity extends AppCompatActivity {
                 //String jsonString = "{\"userProfile\":{\"deviceId\":\"dev-10000\",\"userId\":\"10000\",\"firstName\":\"saravanan\",\"lastName\":\"shanmugavel\",\"bankCode\":\"B1\"},\"bankService\":{\"serviceList\":[{\"serviceName\":\"Personal Banking\"},{\"serviceName\":\"Investment Banking\"},{\"serviceName\":\"Insurance\"},{\"serviceName\":\"Others\"}]}}";
                 JSONObject jsonObj = new JSONObject(result);
                 JSONObject userProfile = jsonObj.getJSONObject("userProfile");
-                String deviceID = userProfile.getString("deviceId");
-                String userId = userProfile.getString("userId");
+               /* String deviceID = userProfile.getString("deviceId");
+                String userId = userProfile.getString("userId");*/
                 customerFirstName  = userProfile.getString("firstName");
                 customerLastName  = userProfile.getString("lastName");
 
                 TextView welcomeText = (TextView) findViewById(R.id.welcometext);
                 welcomeText.setText("Hi " + customerFirstName + " " + customerLastName + " welcome! Please fnd the list of services");
 
+                byte[] imgBytes =Base64.decode(userProfile.getString("imageBytes").getBytes(), Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imgBytes, 0, imgBytes.length);
+                roundedImage = new RoundImage(bitmap);
+                imageView.setImageDrawable(roundedImage);
 
                 JSONObject bankService = jsonObj.getJSONObject("bankService");
                 JSONArray array = bankService.getJSONArray("serviceList");

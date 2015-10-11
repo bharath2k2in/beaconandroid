@@ -7,11 +7,15 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.bluetooth.BluetoothManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.design.widget.FloatingActionButton;
@@ -26,21 +30,17 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 
 import com.beacon.app.NotifyService;
+import com.beacon.scheduler.BeaconJobScheduler;
+import com.estimote.sdk.Region;
 import com.example.saravanan.beaconsample.R;
 
-import org.altbeacon.beacon.Beacon;
-import org.altbeacon.beacon.BeaconConsumer;
-import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.BeaconParser;
-import org.altbeacon.beacon.BeaconTransmitter;
-import org.altbeacon.beacon.MonitorNotifier;
-import org.altbeacon.beacon.Region;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity{
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+public class MainActivity extends AppCompatActivity  {
     protected static final String TAG = "MonitoringActivity";
     private com.estimote.sdk.BeaconManager beaconManager;
     private com.estimote.sdk.Region region;
@@ -50,45 +50,47 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /*RadioButton customerRadio = (RadioButton)findViewById(R.id.radioButton);
+        beaconManager = new com.estimote.sdk.BeaconManager(this);
+
+        RadioButton customerRadio = (RadioButton)findViewById(R.id.radioButton);
         customerRadio.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
-                Intent i = new Intent(MainActivity.this, WelcomeActivity.class);
-                startActivity(i);
-            }
-        });*/
-      /* Dialog = new ProgressDialog(MainActivity.this);
-       Dialog.setMessage("Please wait..");
-       Dialog.show();
+                beaconManager.setMonitoringListener(new com.estimote.sdk.BeaconManager.MonitoringListener() {
+                    @Override
+                    public void onEnteredRegion(com.estimote.sdk.Region region, List<com.estimote.sdk.Beacon> list) {
+                        Intent intent = new Intent(MainActivity.this, NotifyService.class);
+                        MainActivity.this.startService(intent);
+                    }
 
-        beaconManager = new com.estimote.sdk.BeaconManager(this);
+                    @Override
+                    public void onExitedRegion(com.estimote.sdk.Region region) {
 
-       *//*
-        beaconManager.setRangingListener(new com.estimote.sdk.BeaconManager.RangingListener() {
-            @Override
-            public void onBeaconsDiscovered(com.estimote.sdk.Region region, List<com.estimote.sdk.Beacon> list) {
-                if (!list.isEmpty()) {
-                    com.estimote.sdk.Beacon nearestBeacon = list.get(0);
-                    Log.d("Beacon", " Inside onBeaconsDiscovered.....  ");
-                    Dialog.dismiss();
-                    Intent i = new Intent(MainActivity.this, WelcomeActivity.class);
-                    startActivity(i);
-                }
-            }
-        });*//*
+                    }
+                });
 
-        beaconManager.setRangingListener(new com.estimote.sdk.BeaconManager.RangingListener() {
-            @Override
-            public void onBeaconsDiscovered(com.estimote.sdk.Region region, List<com.estimote.sdk.Beacon> list) {
-                Intent intent = new Intent(MainActivity.this, NotifyService.class);
-                MainActivity.this.startService(intent);
+                beaconManager.connect(new com.estimote.sdk.BeaconManager.ServiceReadyCallback() {
+                    @Override
+                    public void onServiceReady() {
+               /* beaconManager.startMonitoring(new com.estimote.sdk.Region("monitored region",
+                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), 22504, 48827));*/
+                        beaconManager.startMonitoring(new com.estimote.sdk.Region("regionId",
+                                UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
+                                null, null));
+                    }
+                });
             }
         });
 
-        region = new com.estimote.sdk.Region("ranged region", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), null, null);*/
-        Intent intent = new Intent(MainActivity.this, NotifyService.class);
-        MainActivity.this.startService(intent);
+
+        RadioButton employerRadio = (RadioButton)findViewById(R.id.radioButton2);
+        employerRadio.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View arg0) {
+                Intent intent = new Intent(MainActivity.this, CustomerServiceActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -125,5 +127,22 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
+    private void backgroundJob(){
+
+        /*Intent intent = new Intent(MainActivity.this, NotifyService.class);
+        MainActivity.this.startService(intent);*/
+
+        ComponentName serviceName = new ComponentName(getApplicationContext(), BeaconJobScheduler.class);
+        JobInfo jobInfo = new JobInfo.Builder(1, serviceName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .setRequiresDeviceIdle(true)
+                .setRequiresCharging(true)
+                .setPeriodic(6000)
+                .build();
+
+        JobScheduler scheduler = (JobScheduler) getApplicationContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        int result = scheduler.schedule(jobInfo);
+        if (result == JobScheduler.RESULT_SUCCESS) Log.d(TAG, "Job scheduled successfully!");
+    }
 
 }

@@ -24,9 +24,10 @@
         android:text="Customer"
         android:id="@+id/radioButton"
         android:checked="false"
+        android:visibility="visible"
         android:layout_centerVertical="true"
-        android:layout_alignStart="@+id/textView"
-        android:visibility="invisible" />
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="51dp" />
 
     <RadioButton
         android:layout_width="wrap_content"
@@ -34,17 +35,8 @@
         android:text="Employee"
         android:id="@+id/radioButton2"
         android:checked="false"
+        android:visibility="visible"
         android:layout_alignTop="@+id/radioButton"
-        android:layout_alignEnd="@+id/textView"
-        android:visibility="invisible" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Beaon Application Testing"
-        android:id="@+id/textView3"
-        android:layout_alignBottom="@+id/radioButton"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignEnd="@+id/textView" />
 
 </RelativeLayout>

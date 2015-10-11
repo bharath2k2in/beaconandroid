@@ -39,6 +39,11 @@
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <service android:name="com.beacon.app.NotifyService"/>
+
+        <service
+            android:name="com.beacon.scheduler.BeaconJobScheduler"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true"/>
     </application>
 
 </manifest>
