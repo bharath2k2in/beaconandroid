@@ -37,6 +37,9 @@ public class CustomerServiceFragmentAdapter extends FragmentPagerAdapter {
                 JSONObject jsonObject = jsonArray.getJSONObject(arg0);
                 byte[] imgBytes = Base64.decode(jsonObject.getString("imageBytes").getBytes(), Base64.DEFAULT);
                 data.putByteArray("image", imgBytes);
+                data.putString("firstName", jsonObject.getString("firstName"));
+                data.putString("lastName", jsonObject.getString("lastName"));
+                data.putString("accountNumber", jsonObject.getString("accountNumber"));
             }
         }catch (Exception e){
             e.printStackTrace();

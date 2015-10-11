@@ -23,6 +23,9 @@ public class CustomerServiceFragment extends Fragment {
     RoundImage roundedImage;
     ImageView imageView;
     byte [] imageByte;
+    private String firstName;
+    private String lastName;
+    private String accountNumber;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,10 @@ public class CustomerServiceFragment extends Fragment {
         Bundle data = getArguments();
         mCurrentPage = data.getInt("current_page", 0);
         imageByte = data.getByteArray("image");
+
+        accountNumber = data.getString("accountNumber");
+        firstName = data.getString("firstName");
+        lastName = data.getString("lastName");
 
     }
 
@@ -50,6 +57,12 @@ public class CustomerServiceFragment extends Fragment {
         }catch (Exception e){
             e.printStackTrace();
         }
+
+        TextView name = (TextView) v.findViewById(R.id.textView2);
+        name.setText(firstName + " " + lastName);
+
+        TextView accountNumberText = (TextView) v.findViewById(R.id.textView3);
+        accountNumberText.setText(accountNumber);
         return v;
     }
 
