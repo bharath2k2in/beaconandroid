@@ -9,12 +9,14 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -52,6 +54,16 @@ public class CustomerServiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_service);
 
+        Button refreshButton = (Button)findViewById(R.id.button3);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View arg0) {
+                new LongOperation().execute(serverURL);
+            }
+        });
+
+        pager = (ViewPager) findViewById(R.id.pager);
+
         new LongOperation().execute(serverURL);
     }
 
@@ -87,14 +99,26 @@ public class CustomerServiceActivity extends AppCompatActivity {
 
         private void parseJSon(){
             try {
+                TextView waitText = (TextView)findViewById(R.id.textView7);
                 JSONArray array = new JSONArray(result);
-                pager = (ViewPager) findViewById(R.id.pager);
-                FragmentManager fm = getSupportFragmentManager();
-                pagerAdapter = new CustomerServiceFragmentAdapter(fm, array);
-                pager.setAdapter(pagerAdapter);
+                if(array != null && array.length() > 0) {
+                    waitText.setVisibility(View.INVISIBLE);
 
-                pagerAdapter.notifyDataSetChanged();
-                pager.invalidate();
+                    FragmentManager fm = getSupportFragmentManager();
+                    pagerAdapter = new CustomerServiceFragmentAdapter(fm, array);
+                    pager.setAdapter(pagerAdapter);
+
+                    pagerAdapter.notifyDataSetChanged();
+                    pager.invalidate();
+                }else{
+                    waitText.setVisibility(View.VISIBLE);
+                    FragmentManager fm = getSupportFragmentManager();
+                    pagerAdapter = new CustomerServiceFragmentAdapter(fm, new JSONArray());
+                    pager.setAdapter(pagerAdapter);
+
+                    pagerAdapter.notifyDataSetChanged();
+                    pager.invalidate();
+                }
 
             }catch(Exception e){
                 e.printStackTrace();

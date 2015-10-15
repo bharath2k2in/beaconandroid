@@ -57,8 +57,8 @@ public class NotifyService extends Service {
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
         Notification noti = new Notification.Builder(this)
-                .setContentTitle("Welcome to RaboBank ")
-                .setContentText("Tap to explore more... ").setSmallIcon(R.drawable.icon)
+                .setContentTitle("RaboBank")
+                .setContentText("").setSmallIcon(R.drawable.rabo_image1)
                 .setContentIntent(pIntent).build();
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         noti.flags |= Notification.FLAG_AUTO_CANCEL;

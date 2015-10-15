@@ -26,10 +26,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.beacon.app.NotifyService;
+import com.beacon.dao.BeaconDAO;
 import com.beacon.scheduler.BeaconJobScheduler;
 import com.estimote.sdk.Region;
 import com.example.saravanan.beaconsample.R;
@@ -45,40 +48,59 @@ public class MainActivity extends AppCompatActivity  {
     private com.estimote.sdk.BeaconManager beaconManager;
     private com.estimote.sdk.Region region;
     private ProgressDialog Dialog;
+    private BeaconDAO dao;
+
+    Button button;
+    EditText accountNumberText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         beaconManager = new com.estimote.sdk.BeaconManager(this);
+        button = (Button)findViewById(R.id.button);
+        accountNumberText = (EditText)findViewById(R.id.editText);
+
+        dao = new BeaconDAO(getBaseContext());
+        dao.open();
+
+        Button delButton = (Button)findViewById(R.id.button2);
+        delButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View arg0) {
+                dao.deleteUser();
+            }
+        });
+
 
         RadioButton customerRadio = (RadioButton)findViewById(R.id.radioButton);
         customerRadio.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
-                beaconManager.setMonitoringListener(new com.estimote.sdk.BeaconManager.MonitoringListener() {
-                    @Override
-                    public void onEnteredRegion(com.estimote.sdk.Region region, List<com.estimote.sdk.Beacon> list) {
-                        Intent intent = new Intent(MainActivity.this, NotifyService.class);
-                        MainActivity.this.startService(intent);
-                    }
+                if (dao.getUser()!= null) {
+                    initiateBeaconListner();
+                }else{
 
-                    @Override
-                    public void onExitedRegion(com.estimote.sdk.Region region) {
+                    accountNumberText.setVisibility(View.VISIBLE);
 
-                    }
-                });
+                    TextView accountNumberLabel = (TextView)findViewById(R.id.textView4);
+                    accountNumberLabel.setVisibility(View.VISIBLE);
 
-                beaconManager.connect(new com.estimote.sdk.BeaconManager.ServiceReadyCallback() {
-                    @Override
-                    public void onServiceReady() {
-               /* beaconManager.startMonitoring(new com.estimote.sdk.Region("monitored region",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), 22504, 48827));*/
-                        beaconManager.startMonitoring(new com.estimote.sdk.Region("regionId",
-                                UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-                                null, null));
-                    }
-                });
+
+                    button.setVisibility(View.VISIBLE);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View arg0) {
+                            dao.createUser(accountNumberText.getText().toString());
+                            initiateBeaconListner();
+                            accountNumberText.setVisibility(View.INVISIBLE);
+                            TextView accountNumberLabel = (TextView)findViewById(R.id.textView4);
+                            accountNumberLabel.setVisibility(View.INVISIBLE);
+                            button.setVisibility(View.INVISIBLE);
+                        }
+                    });
+
+                }
             }
         });
 
@@ -93,6 +115,32 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
+    public void  initiateBeaconListner(){
+        beaconManager.setMonitoringListener(new com.estimote.sdk.BeaconManager.MonitoringListener() {
+            @Override
+            public void onEnteredRegion(com.estimote.sdk.Region region, List<com.estimote.sdk.Beacon> list) {
+                Intent intent = new Intent(MainActivity.this, NotifyService.class);
+                MainActivity.this.startService(intent);
+            }
+
+            @Override
+            public void onExitedRegion(com.estimote.sdk.Region region) {
+
+            }
+        });
+
+        beaconManager.connect(new com.estimote.sdk.BeaconManager.ServiceReadyCallback() {
+            @Override
+            public void onServiceReady() {
+               /* beaconManager.startMonitoring(new com.estimote.sdk.Region("monitored region",
+                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), 22504, 48827));*/
+                beaconManager.startMonitoring(new com.estimote.sdk.Region("regionId",
+                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
+                        null, null));
+            }
+        });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
@@ -105,6 +153,7 @@ public class MainActivity extends AppCompatActivity  {
 
     @Override
     protected void onResume() {
+        dao.open();
         super.onResume();
         /*beaconManager.connect(new com.estimote.sdk.BeaconManager.ServiceReadyCallback() {
             @Override
@@ -117,12 +166,14 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onPause() {
        //beaconManager.stopRanging(region);
+        dao.close();
        super.onPause();
     }
 
 
     @Override
     protected void onDestroy() {
+        dao.close();
         super.onDestroy();
 
     }

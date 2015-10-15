@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.beacon.dao.BeaconDAO;
 import com.beacon.server.ServerHandler;
 import com.beacon.util.RoundImage;
 import com.example.saravanan.beaconsample.R;
@@ -34,6 +35,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,20 +61,17 @@ public class WelcomeActivity extends AppCompatActivity {
     private String customerFirstName;
     private String customerLastName;
 
+    private BeaconDAO dao;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+
+        dao = new BeaconDAO(getBaseContext());
+        dao.open();
+
         imageView = (ImageView) findViewById(R.id.imageView);
-
-        /*imageView = (ImageView) findViewById(R.id.imageView);
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.my_photo);
-        roundedImage = new RoundImage(bm);
-        imageView.setImageDrawable(roundedImage);*/
-
-       /* imageView = (ImageView) findViewById(R.id.imageView);
-        Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.my_photo);
-        imageView.setImageBitmap(icon);*/
 
         String []values = new String[0];
         listView = (ListView) findViewById(R.id.listView);
@@ -103,7 +102,9 @@ public class WelcomeActivity extends AppCompatActivity {
         protected Void doInBackground(String... urls) {
             Log.d("Content ", "Starting doInBackground  ");
             ServerHandler serverHandler = new ServerHandler();
-            result = serverHandler.makeServiceCall(serverURL, 1, new ArrayList<NameValuePair>());
+            ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("accountNumber", dao.getUser()));
+            result = serverHandler.makeServiceCall(serverURL, 1, params);
             return null;
         }
 
@@ -120,16 +121,14 @@ public class WelcomeActivity extends AppCompatActivity {
 
         private void parseJSon(){
             try {
-                //String jsonString = "{\"userProfile\":{\"deviceId\":\"dev-10000\",\"userId\":\"10000\",\"firstName\":\"saravanan\",\"lastName\":\"shanmugavel\",\"bankCode\":\"B1\"},\"bankService\":{\"serviceList\":[{\"serviceName\":\"Personal Banking\"},{\"serviceName\":\"Investment Banking\"},{\"serviceName\":\"Insurance\"},{\"serviceName\":\"Others\"}]}}";
                 JSONObject jsonObj = new JSONObject(result);
                 JSONObject userProfile = jsonObj.getJSONObject("userProfile");
-               /* String deviceID = userProfile.getString("deviceId");
-                String userId = userProfile.getString("userId");*/
                 customerFirstName  = userProfile.getString("firstName");
                 customerLastName  = userProfile.getString("lastName");
 
                 TextView welcomeText = (TextView) findViewById(R.id.welcometext);
-                welcomeText.setText("Hi " + customerFirstName + " " + customerLastName + " welcome! Please fnd the list of services");
+                welcomeText.setText("Hi " + customerFirstName + " " + customerLastName
+                        + " your Token# is " + userProfile.getString("tokenNumber"));
 
                 byte[] imgBytes =Base64.decode(userProfile.getString("imageBytes").getBytes(), Base64.DEFAULT);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imgBytes, 0, imgBytes.length);
@@ -151,4 +150,25 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    protected void onResume() {
+        dao.open();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        dao.close();
+        super.onPause();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        dao.close();
+        super.onDestroy();
+
+    }
+
 }
