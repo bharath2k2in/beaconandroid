@@ -8,8 +8,8 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:name="com.beacon.app.BeaconApplication"
@@ -27,7 +27,8 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>.
+        </activity>
+.
         <activity
             android:name="com.beacon.activity.WelcomeActivity"
             android:label="@string/title_activity_welcome"
@@ -38,12 +39,15 @@
             android:label="@string/title_activity_customer_service"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
-        <service android:name="com.beacon.app.NotifyService"/>
 
+        <service android:name="com.beacon.app.NotifyService" />
         <service
             android:name="com.beacon.scheduler.BeaconJobScheduler"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="true"/>
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <activity android:name="com.beacon.activity.BankerInfoActivity" >
+        </activity>
     </application>
 
 </manifest>

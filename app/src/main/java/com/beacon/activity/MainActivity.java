@@ -1,31 +1,19 @@
 package com.beacon.activity;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
-import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.RemoteException;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -34,11 +22,8 @@ import android.widget.TextView;
 import com.beacon.app.NotifyService;
 import com.beacon.dao.BeaconDAO;
 import com.beacon.scheduler.BeaconJobScheduler;
-import com.estimote.sdk.Region;
 import com.example.saravanan.beaconsample.R;
 
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -137,6 +122,8 @@ public class MainActivity extends AppCompatActivity  {
                 beaconManager.startMonitoring(new com.estimote.sdk.Region("regionId",
                         UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
                         null, null));
+                Intent intent = new Intent(MainActivity.this, NotifyService.class);
+                MainActivity.this.startService(intent);
             }
         });
     }

@@ -4,23 +4,11 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.IBinder;
-import android.util.Log;
 
-import com.beacon.activity.CustomerServiceActivity;
 import com.beacon.activity.WelcomeActivity;
-import com.estimote.sdk.Beacon;
-import com.estimote.sdk.BeaconManager;
-import com.estimote.sdk.Region;
 import com.example.saravanan.beaconsample.R;
-
-import java.util.List;
-import java.util.UUID;
 
 public class NotifyService extends Service {
 
@@ -48,7 +36,7 @@ public class NotifyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         sendNotification();
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     private void  sendNotification(){
@@ -63,7 +51,7 @@ public class NotifyService extends Service {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         noti.flags |= Notification.FLAG_AUTO_CANCEL;
 
-        notificationManager.notify(0, noti);
+        notificationManager.notify(9999, noti);
     }
 
     @Override

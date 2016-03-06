@@ -4,40 +4,27 @@ import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Base64;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
-import com.beacon.activity.MainActivity;
 import com.beacon.activity.WelcomeActivity;
 import com.beacon.server.ServerHandler;
-import com.beacon.util.RoundImage;
-import com.estimote.sdk.Beacon;
 import com.example.saravanan.beaconsample.R;
 
 import org.apache.http.NameValuePair;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by saravanan on 09-Oct-15.
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class BeaconJobScheduler extends JobService {
-    String serverURL = "http://beaconservice.elasticbeanstalk.com/checkforcustomers";
+    String serverURL = "https://beaconservicep1941589823trial.hanatrial.ondemand.com/beaconservice/checkforcustomers";
 
     public BeaconJobScheduler(){
     }

@@ -6,19 +6,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.beacon.dao.BeaconDAO;
@@ -26,33 +21,15 @@ import com.beacon.server.ServerHandler;
 import com.beacon.util.RoundImage;
 import com.example.saravanan.beaconsample.R;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class WelcomeActivity extends AppCompatActivity {
-    String serverURL = "http://beaconservice.elasticbeanstalk.com/getuserprofile";
+    String serverURL = "https://beaconservicep1941589823trial.hanatrial.ondemand.com/beaconservice/getuserprofile";
     RoundImage roundedImage;
     ImageView imageView;
     ArrayAdapter<String> adapter = null;
@@ -78,9 +55,9 @@ public class WelcomeActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(WelcomeActivity.this, CustomerServiceActivity.class);
-                i.putExtra("customerFirstName", customerFirstName);
-                i.putExtra("customerLastName", customerLastName);
+                String entry =  (String)parent.getAdapter().getItem(position);
+                Intent i = new Intent(WelcomeActivity.this, BankerInfoActivity.class);
+                i.putExtra("serviceName", entry);
                 startActivity(i);
             }
         });
