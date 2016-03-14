@@ -122,8 +122,8 @@ public class MainActivity extends AppCompatActivity  {
                 beaconManager.startMonitoring(new com.estimote.sdk.Region("regionId",
                         UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
                         null, null));
-                Intent intent = new Intent(MainActivity.this, NotifyService.class);
-                MainActivity.this.startService(intent);
+                /*Intent intent = new Intent(MainActivity.this, NotifyService.class);
+                MainActivity.this.startService(intent);*/
             }
         });
     }

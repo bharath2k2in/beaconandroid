@@ -66,7 +66,8 @@
         android:id="@+id/button2"
         android:layout_marginBottom="45dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible" />
 
     <EditText
         android:layout_width="wrap_content"
