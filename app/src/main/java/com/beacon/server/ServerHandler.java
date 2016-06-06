@@ -57,7 +57,6 @@ public class ServerHandler {
             }
             httpEntity = httpResponse.getEntity();
             response = EntityUtils.toString(httpEntity);
-
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (ClientProtocolException e) {
